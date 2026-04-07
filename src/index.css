@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+
+@layer base {
+  :root {
+    --background: 48 100% 99%;
+    --foreground: 220 20% 15%;
+
+    --card: 48 60% 96%;
+    --card-foreground: 220 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+
+    --primary: 42 100% 50%;
+    --primary-foreground: 220 20% 10%;
+
+    --secondary: 45 50% 92%;
+    --secondary-foreground: 220 20% 25%;
+
+    --muted: 45 20% 93%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 30 100% 50%;
+    --accent-foreground: 220 20% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 42 35% 82%;
+    --input: 42 35% 82%;
+    --ring: 42 100% 50%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 42 40% 95%;
+    --sidebar-foreground: 220 20% 20%;
+    --sidebar-primary: 42 100% 50%;
+    --sidebar-primary-foreground: 220 20% 15%;
+    --sidebar-accent: 42 30% 88%;
+    --sidebar-accent-foreground: 220 20% 20%;
+    --sidebar-border: 42 30% 85%;
+    --sidebar-ring: 42 100% 50%;
+
+    /* Custom tokens */
+    --amber-glow: 42 100% 50%;
+    --amber-soft: 42 80% 70%;
+    --navy-deep: 220 20% 10%;
+    --navy-light: 220 15% 30%;
+    --success: 142 70% 45%;
+    --gradient-hero: linear-gradient(135deg, hsl(48 100% 99%) 0%, hsl(42 60% 95%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(42 100% 50%) 0%, hsl(30 100% 45%) 100%);
+    --shadow-glow: 0 0 40px hsl(42 100% 50% / 0.3);
+    --shadow-card: 0 8px 32px hsl(42 100% 50% / 0.12);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-accent);
+  }
+
+  .glow-amber {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glass {
+    @apply bg-background/80 backdrop-blur-xl border-b border-border;
+  }
+}
