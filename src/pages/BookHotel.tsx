@@ -20,6 +20,14 @@ interface Hotel {
   available: boolean;
 }
 
+const PREFERENCE_MULTIPLIER: Record<string, number> = {
+  budget: 0.7,
+  standard: 1,
+  luxury: 1.8,
+};
+
+const getTodayString = () => new Date().toISOString().split("T")[0];
+
 const BookHotel = () => {
   const [searchParams] = useSearchParams();
   const hotelId = searchParams.get("hotel") || "";
@@ -81,6 +89,10 @@ const BookHotel = () => {
 //           from_name: form.name,
 //           from_email: form.email,
 //           phone: form.phone,
+//           to_name: "Admin",
+//           guest_name: form.name,
+//           guest_email: form.email,
+//           guest_phone: form.phone,
 //           hotel_name: hotel?.name || "N/A",
 //           hotel_city: hotel?.city || "N/A",
 //           check_in: form.check_in,
@@ -90,7 +102,7 @@ const BookHotel = () => {
 //           hotel_preference: form.hotel_preference,
 //           room_type: form.room_type,
 //           special_occasion: form.special_occasion,
-//           message: form.message,
+//           message: `Name: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nHotel: ${hotel?.name}\nCity: ${hotel?.city}\nCheck-in: ${form.check_in}\nCheck-out: ${form.check_out}\nGuests: ${form.guests}\nRooms: ${form.rooms}\nPreference: ${form.hotel_preference}\nRoom Type: ${form.room_type}${form.special_occasion ? `\nOccasion: ${form.special_occasion}` : ""}${form.message ? `\nNotes: ${form.message}` : ""}`,
 //         }, publicKey);
 //       }
 //     } catch (emailError) {
@@ -107,8 +119,7 @@ const BookHotel = () => {
 //     }
 //   };
 
-
-const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   if (!form.name || !form.phone || !form.check_in || !form.check_out) {
@@ -143,8 +154,8 @@ const handleSubmit = async (e: React.FormEvent) => {
   try {
     // ✅ 1. Send Email (same style as taxi)
     await emailjs.send(
-      "service_h9dxvmh",   // 🔴 your service ID
-      "template_70izern",  // 🔴 your template ID
+      "service_qqsrpwb",   // 🔴 your service ID
+      "template_itgacda",  // 🔴 your template ID
       templateParams,
       "CgOZaW5zQ1gtbicoe"  // 🔴 your public key
     );
@@ -176,6 +187,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   setSubmitting(false);
 };
 
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -202,7 +214,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     const nights = form.check_in && form.check_out
       ? Math.max(1, Math.ceil((new Date(form.check_out).getTime() - new Date(form.check_in).getTime()) / (1000 * 60 * 60 * 24)))
       : 1;
-    const totalPrice = hotel.price_per_night * nights * parseInt(form.rooms);
+    const multiplier = PREFERENCE_MULTIPLIER[form.hotel_preference] || 1;
+    const totalPrice = Math.round(hotel.price_per_night * nights * parseInt(form.rooms) * multiplier);
 
     return (
       <div className="min-h-screen bg-background">
@@ -233,7 +246,8 @@ const handleSubmit = async (e: React.FormEvent) => {
   const nights = form.check_in && form.check_out
     ? Math.max(1, Math.ceil((new Date(form.check_out).getTime() - new Date(form.check_in).getTime()) / (1000 * 60 * 60 * 24)))
     : 0;
-  const totalPrice = nights > 0 ? hotel.price_per_night * nights * parseInt(form.rooms) : 0;
+  const multiplier = PREFERENCE_MULTIPLIER[form.hotel_preference] || 1;
+  const totalPrice = nights > 0 ? Math.round(hotel.price_per_night * nights * parseInt(form.rooms) * multiplier) : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -300,12 +314,12 @@ const handleSubmit = async (e: React.FormEvent) => {
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground flex items-center gap-1"><CalendarDays className="h-4 w-4 text-primary" /> Check In *</label>
-                <input name="check_in" type="date" value={form.check_in} onChange={handleChange}
+                <input name="check_in" type="date" value={form.check_in} onChange={handleChange} min={getTodayString()}
                   className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground flex items-center gap-1"><CalendarDays className="h-4 w-4 text-primary" /> Check Out *</label>
-                <input name="check_out" type="date" value={form.check_out} onChange={handleChange}
+                <input name="check_out" type="date" value={form.check_out} onChange={handleChange} min={form.check_in || getTodayString()}
                   className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
               </div>
             </div>
